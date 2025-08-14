@@ -3548,6 +3548,7 @@ export function SEOReport({ data }: SEOReportProps) {
                         url={data.url}
                         timestamp={data.analyzedAt}
                         disableScanEffect={true}
+                        useRealisticMonitor={true}
                       />
                     );
                   }
