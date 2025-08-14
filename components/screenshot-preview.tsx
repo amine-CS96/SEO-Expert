@@ -54,10 +54,10 @@ export function ScreenshotPreview({
     mobile: {
       icon: Smartphone,
       label: 'Mobile View',
-      width: 'w-52 sm:w-64',
-      height: 'h-[22rem] sm:h-[26rem]',
+      width: 'w-64 md:w-72',
+      height: 'h-[30rem] md:h-[32rem]',
       borderRadius: 'rounded-3xl',
-      padding: 'p-1 sm:p-2'
+      padding: 'p-2'
     },
     tablet: {
       icon: Tablet,
