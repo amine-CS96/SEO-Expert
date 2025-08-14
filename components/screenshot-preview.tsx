@@ -134,12 +134,12 @@ export function ScreenshotPreview({
         >
           {/* Device Frame */}
           {deviceType === 'desktop' && useRealisticMonitor ? (
-            /* Realistic Monitor Design */
-            <div className="relative mx-auto">
+            /* Realistic Monitor Design with Mobile-like Styling */
+            <div className="relative mx-auto screenshot-float screenshot-reflection">
               {/* Monitor Screen */}
-              <div className="relative w-96 sm:w-[28rem] h-72 sm:h-80 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-lg shadow-2xl border-2 border-slate-700/50 p-1">
+              <div className="relative w-96 sm:w-[28rem] h-72 sm:h-80 rounded-lg shadow-2xl border-4 border-blue-300 p-1 device-frame-mobile">
                 {/* Screen Bezel */}
-                <div className="w-full h-full bg-black rounded-md overflow-hidden relative shadow-inner border border-slate-600/30">
+                <div className="w-full h-full rounded-md overflow-hidden relative shadow-inner border-2 border-blue-200 screenshot-glass device-frame-mobile">
                   {/* Screen Content will go here */}
                   <div className="w-full h-full bg-white rounded-sm overflow-hidden relative">
                     {/* Browser Chrome */}
@@ -224,19 +224,22 @@ export function ScreenshotPreview({
                 
                 {/* Monitor Brand/Power LED */}
                 <div className="absolute bottom-2 right-4 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg animate-pulse"></div>
-                  <span className="text-xs text-slate-400 font-mono">MONITOR</span>
+                  <div className="w-2 h-2 bg-green-400 rounded-full shadow-lg screenshot-pulse"></div>
+                  <span className="text-xs text-blue-200 font-mono font-bold">MONITOR</span>
                 </div>
+                
+                {/* Device Reflection */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent rounded-lg pointer-events-none"></div>
               </div>
               
-              {/* Monitor Stand */}
+              {/* Monitor Stand with Mobile-like Colors */}
               <div className="relative flex justify-center">
                 {/* Stand Neck */}
-                <div className="w-4 h-8 bg-gradient-to-b from-slate-600 to-slate-700 rounded-b-lg shadow-lg"></div>
+                <div className="w-4 h-8 rounded-b-lg shadow-lg border border-blue-200 device-frame-mobile"></div>
                 
                 {/* Stand Base */}
-                <div className="absolute top-6 w-24 h-4 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 rounded-full shadow-xl">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-500/30 to-transparent rounded-full"></div>
+                <div className="absolute top-6 w-24 h-4 rounded-full shadow-xl border border-blue-200 device-frame-mobile">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-200/50 to-transparent rounded-full"></div>
                 </div>
               </div>
             </div>
