@@ -119,7 +119,7 @@ export class ScreenshotService {
       let captureHeight = options.height || viewportConfig.height;
       if (options.fullPage) {
         captureHeight = options.device === 'tablet' ? 2048 :
-                      options.device === 'mobile' ? 1334 :
+                      options.device === 'mobile' ? 1800 : // Augmenté pour mobile
                       options.height || 1080;
       }
       
@@ -190,7 +190,7 @@ export class ScreenshotService {
       if (options.fullPage) {
         // Pour fullPage, utiliser une hauteur plus grande pour capturer plus de contenu
         captureHeight = options.device === 'tablet' ? 2048 :
-                      options.device === 'mobile' ? 1334 :
+                      options.device === 'mobile' ? 1800 : // Augmenté pour capturer plus de contenu mobile
                       1080; // Desktop reste pareil car fullPage: false
       }
       
@@ -260,7 +260,7 @@ export class ScreenshotService {
       let captureHeight = viewportConfig.height;
       if (options.fullPage) {
         captureHeight = options.device === 'tablet' ? 2048 :
-                      options.device === 'mobile' ? 1334 :
+                      options.device === 'mobile' ? 1800 : // Augmenté pour mobile
                       1080;
       }
       
