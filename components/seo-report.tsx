@@ -3547,6 +3547,7 @@ export function SEOReport({ data }: SEOReportProps) {
                         desktopScreenshot={desktopScreenshot}
                         url={data.url}
                         timestamp={data.analyzedAt}
+                        disableScanEffect={true}
                       />
                     );
                   }
