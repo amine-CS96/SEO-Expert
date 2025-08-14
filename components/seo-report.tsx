@@ -1148,17 +1148,41 @@ export function SEOReport({ data }: SEOReportProps) {
                 {/* Website Preview - New Modern Component */}
                 <div className="space-y-4 animate-slideInRight">
                   {(() => {
-                    const screenshot = data.crawlingData.desktopScreenshot || data.crawlingData.screenshot || data.crawlingData.mobileScreenshot;
-                    return screenshot ? (
-                      <ScreenshotPreview
-                        screenshot={screenshot}
-                        url={data.url}
-                        title="Website Preview"
-                        timestamp={data.analyzedAt}
-                        deviceType="desktop"
-                        className="flex justify-center"
-                      />
-                    ) : null;
+                    // Try different screenshot sources in order of preference
+                    const screenshot = data.crawlingData.desktopScreenshot ||
+                                     data.crawlingData.screenshot ||
+                                     data.crawlingData.mobileScreenshot ||
+                                     data.crawlingData.tabletScreenshot;
+                    
+                    if (screenshot) {
+                      return (
+                        <ScreenshotPreview
+                          screenshot={screenshot}
+                          url={data.url}
+                          title="Website Preview"
+                          timestamp={data.analyzedAt}
+                          deviceType="desktop"
+                          className="flex justify-center"
+                        />
+                      );
+                    }
+                    
+                    // Fallback when no screenshot is available
+                    return (
+                      <div className="flex justify-center">
+                        <div className="text-center p-8 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+                          <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center">
+                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Screenshot Not Available</h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Screenshot capture is currently unavailable in the production environment.
+                          </p>
+                        </div>
+                      </div>
+                    );
                   })()}
                 </div>
               </div>
@@ -3504,14 +3528,47 @@ export function SEOReport({ data }: SEOReportProps) {
                   This check visually demonstrates how your page renders on different devices. It is important that your page is optimized for mobile and tablet experiences as today the majority of web traffic comes from these sources.
                 </p>
                 
-                {data.crawlingData.mobileScreenshot && (
-                  <MultiDevicePreview
-                    mobileScreenshot={data.crawlingData.mobileScreenshot}
-                    tabletScreenshot={data.crawlingData.mobileScreenshot} // Using same screenshot for tablet simulation
-                    url={data.url}
-                    timestamp={data.analyzedAt}
-                  />
-                )}
+                {(() => {
+                  // Try to get available screenshots in order of preference
+                  const mobileScreenshot = data.crawlingData.mobileScreenshot ||
+                                          data.crawlingData.screenshot ||
+                                          data.crawlingData.desktopScreenshot;
+                  const tabletScreenshot = data.crawlingData.tabletScreenshot ||
+                                          data.crawlingData.mobileScreenshot ||
+                                          data.crawlingData.screenshot;
+                  const desktopScreenshot = data.crawlingData.desktopScreenshot ||
+                                           data.crawlingData.screenshot;
+
+                  if (mobileScreenshot || tabletScreenshot || desktopScreenshot) {
+                    return (
+                      <MultiDevicePreview
+                        mobileScreenshot={mobileScreenshot}
+                        tabletScreenshot={tabletScreenshot}
+                        desktopScreenshot={desktopScreenshot}
+                        url={data.url}
+                        timestamp={data.analyzedAt}
+                      />
+                    );
+                  }
+
+                  // Fallback when no screenshots are available
+                  return (
+                    <div className="text-center p-8 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 dark:bg-gray-600 rounded-lg flex items-center justify-center">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Device Screenshots Not Available</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Device rendering screenshots are currently unavailable in the production environment.
+                      </p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                        Your site's mobile responsiveness can still be tested manually on different devices.
+                      </p>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Google's Core Web Vitals - Clickable Subsection */}
