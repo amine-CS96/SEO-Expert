@@ -113,6 +113,16 @@ export class ScreenshotService {
    */
   private static async captureWithHtmlCssToImage(options: ScreenshotOptions): Promise<ScreenshotResult> {
     try {
+      const viewportConfig = this.getViewportConfig(options.device || 'desktop');
+      
+      // Ajuster la hauteur pour fullPage
+      let captureHeight = options.height || viewportConfig.height;
+      if (options.fullPage) {
+        captureHeight = options.device === 'tablet' ? 2048 :
+                      options.device === 'mobile' ? 1334 :
+                      options.height || 1080;
+      }
+      
       const response = await fetch('https://hcti.io/v1/image', {
         method: 'POST',
         headers: {
@@ -121,9 +131,10 @@ export class ScreenshotService {
         },
         body: JSON.stringify({
           url: options.url,
-          viewport_width: options.width || 1920,
-          viewport_height: options.height || 1080,
-          device_scale_factor: 1
+          viewport_width: options.width || viewportConfig.width,
+          viewport_height: captureHeight,
+          device_scale_factor: 1,
+          full_page: options.fullPage || false
         })
       });
       
@@ -173,15 +184,26 @@ export class ScreenshotService {
     try {
       // Utiliser screenshotapi.net (service gratuit avec limite)
       const viewportConfig = this.getViewportConfig(options.device || 'desktop');
+      
+      // Ajuster la hauteur pour fullPage
+      let captureHeight = viewportConfig.height;
+      if (options.fullPage) {
+        // Pour fullPage, utiliser une hauteur plus grande pour capturer plus de contenu
+        captureHeight = options.device === 'tablet' ? 2048 :
+                      options.device === 'mobile' ? 1334 :
+                      1080; // Desktop reste pareil car fullPage: false
+      }
+      
       const apiUrl = `https://shot.screenshotapi.net/screenshot`;
       
       const params = new URLSearchParams({
         url: options.url,
         width: viewportConfig.width.toString(),
-        height: viewportConfig.height.toString(),
+        height: captureHeight.toString(),
         output: 'json',
         file_type: 'png',
-        wait_for_event: 'load'
+        wait_for_event: 'load',
+        full_page: options.fullPage ? 'true' : 'false'
       });
 
       const response = await fetch(`${apiUrl}?${params}`, {
@@ -234,6 +256,14 @@ export class ScreenshotService {
       // Utiliser htmlcsstoimage.com avec leur endpoint gratuit limité
       const viewportConfig = this.getViewportConfig(options.device || 'desktop');
       
+      // Ajuster la hauteur pour fullPage
+      let captureHeight = viewportConfig.height;
+      if (options.fullPage) {
+        captureHeight = options.device === 'tablet' ? 2048 :
+                      options.device === 'mobile' ? 1334 :
+                      1080;
+      }
+      
       const response = await fetch('https://htmlcsstoimage.com/demo_run', {
         method: 'POST',
         headers: {
@@ -242,8 +272,9 @@ export class ScreenshotService {
         body: JSON.stringify({
           url: options.url,
           viewport_width: viewportConfig.width,
-          viewport_height: viewportConfig.height,
-          device_scale_factor: 1
+          viewport_height: captureHeight,
+          device_scale_factor: 1,
+          full_page: options.fullPage || false
         })
       });
 
