@@ -31,6 +31,7 @@ interface ScreenshotPreviewProps {
   deviceType?: 'mobile' | 'tablet' | 'desktop'
   className?: string
   disableScanEffect?: boolean
+  useRealisticMonitor?: boolean
 }
 
 export function ScreenshotPreview({
@@ -40,7 +41,8 @@ export function ScreenshotPreview({
   timestamp,
   deviceType = 'mobile',
   className = "",
-  disableScanEffect = false
+  disableScanEffect = false,
+  useRealisticMonitor = false
 }: ScreenshotPreviewProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isZoomed, setIsZoomed] = useState(false)
@@ -131,7 +133,116 @@ export function ScreenshotPreview({
           className="relative"
         >
           {/* Device Frame */}
-          <div className={`relative mx-auto ${config.width} ${config.height} ${deviceType === 'mobile' ? 'device-frame-mobile' : deviceType === 'tablet' ? 'device-frame-tablet' : 'device-frame-desktop-modern'} ${config.borderRadius} ${config.padding} ${deviceType === 'desktop' ? 'shadow-2xl shadow-blue-500/20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50' : 'shadow-2xl'} screenshot-hover-lift screenshot-float screenshot-reflection`}>
+          {deviceType === 'desktop' && useRealisticMonitor ? (
+            /* Realistic Monitor Design */
+            <div className="relative mx-auto">
+              {/* Monitor Screen */}
+              <div className="relative w-96 sm:w-[28rem] h-72 sm:h-80 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-lg shadow-2xl border-2 border-slate-700/50 p-1">
+                {/* Screen Bezel */}
+                <div className="w-full h-full bg-black rounded-md overflow-hidden relative shadow-inner border border-slate-600/30">
+                  {/* Screen Content will go here */}
+                  <div className="w-full h-full bg-white rounded-sm overflow-hidden relative">
+                    {/* Browser Chrome */}
+                    <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200/80 backdrop-blur-sm">
+                      <div className="flex gap-2">
+                        <div className="w-3 h-3 rounded-full bg-gradient-to-br from-red-400 to-red-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
+                        <div className="w-3 h-3 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
+                        <div className="w-3 h-3 rounded-full bg-gradient-to-br from-green-400 to-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
+                      </div>
+                      <div className="flex-1 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1.5 text-xs text-slate-600 font-mono truncate ml-2 shadow-inner border border-slate-200/50">
+                        <span className="text-slate-400">🔒</span> {url}
+                      </div>
+                      <div className="flex gap-1">
+                        <div className="w-6 h-4 bg-slate-200/50 rounded-sm"></div>
+                        <div className="w-6 h-4 bg-slate-200/50 rounded-sm"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Loading State */}
+                    {isLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-50 screenshot-shimmer">
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="relative">
+                            <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin screenshot-glow-blue"></div>
+                            <Sparkles className="w-4 h-4 text-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 screenshot-pulse" />
+                          </div>
+                          <p className="text-xs text-gray-500 font-medium">Capturing screenshot...</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Error State */}
+                    {imageError && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+                        <div className="flex flex-col items-center gap-3 text-center p-4">
+                          <Camera className="w-8 h-8 text-gray-400" />
+                          <div>
+                            <p className="text-sm font-medium text-gray-600">Screenshot unavailable</p>
+                            <p className="text-xs text-gray-500 mt-1">Unable to capture website preview</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Screenshot Image */}
+                    {!imageError && (
+                      <img
+                        ref={imageRef}
+                        src={`data:image/png;base64,${screenshot}`}
+                        alt={`Screenshot of ${url}`}
+                        className={`w-full h-full object-cover object-top screenshot-zoom-transition cursor-pointer ${isLoading ? 'opacity-0' : 'opacity-100'} scale-[1.3]`}
+                        onLoad={handleImageLoad}
+                        onError={handleImageError}
+                        onClick={() => setIsFullscreen(true)}
+                      />
+                    )}
+
+                    {/* Status Indicators */}
+                    <div className="absolute top-2 left-2 flex gap-2">
+                      <Badge variant="secondary" className="text-xs bg-green-500/90 text-white border-0 screenshot-glass status-badge-animate">
+                        <div className="w-1.5 h-1.5 bg-white rounded-full mr-1 screenshot-pulse"></div>
+                        Live
+                      </Badge>
+                    </div>
+
+                    {/* Zoom Indicator */}
+                    <div className="absolute bottom-2 right-2 opacity-0 group-hover/screen:opacity-100 transition-opacity duration-300">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="h-6 w-6 p-0 bg-black/50 hover:bg-black/70 text-white border-0 screenshot-glass screenshot-button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setIsFullscreen(true)
+                        }}
+                      >
+                        <Eye className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Monitor Brand/Power LED */}
+                <div className="absolute bottom-2 right-4 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-400 rounded-full shadow-lg animate-pulse"></div>
+                  <span className="text-xs text-slate-400 font-mono">MONITOR</span>
+                </div>
+              </div>
+              
+              {/* Monitor Stand */}
+              <div className="relative flex justify-center">
+                {/* Stand Neck */}
+                <div className="w-4 h-8 bg-gradient-to-b from-slate-600 to-slate-700 rounded-b-lg shadow-lg"></div>
+                
+                {/* Stand Base */}
+                <div className="absolute top-6 w-24 h-4 bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 rounded-full shadow-xl">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-500/30 to-transparent rounded-full"></div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Original Device Frame */
+            <div className={`relative mx-auto ${config.width} ${config.height} ${deviceType === 'mobile' ? 'device-frame-mobile' : deviceType === 'tablet' ? 'device-frame-tablet' : 'device-frame-desktop-modern'} ${config.borderRadius} ${config.padding} ${deviceType === 'desktop' ? 'shadow-2xl shadow-blue-500/20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50' : 'shadow-2xl'} screenshot-hover-lift screenshot-float screenshot-reflection`}>
             
             {/* Device Details Bar */}
             <div className="absolute -top-8 left-0 right-0 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -167,103 +278,104 @@ export function ScreenshotPreview({
               </div>
             </div>
 
-            {/* Screen Content */}
-            <div className={`w-full h-full bg-white ${config.borderRadius === 'rounded-3xl' ? 'rounded-2xl' : config.borderRadius === 'rounded-2xl' ? 'rounded-xl' : 'rounded-lg'} overflow-hidden relative group/screen ${deviceType === 'desktop' ? 'shadow-inner shadow-slate-900/30 ring-1 ring-slate-700/20' : 'screenshot-glass'}`}>
-              
-              {/* Browser Chrome (for desktop) */}
-              {deviceType === 'desktop' && (
-                <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200/80 backdrop-blur-sm">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-red-400 to-red-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
-                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
-                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-green-400 to-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
-                  </div>
-                  <div className="flex-1 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1.5 text-xs text-slate-600 font-mono truncate ml-2 shadow-inner border border-slate-200/50">
-                    <span className="text-slate-400">🔒</span> {url}
-                  </div>
-                  <div className="flex gap-1">
-                    <div className="w-6 h-4 bg-slate-200/50 rounded-sm"></div>
-                    <div className="w-6 h-4 bg-slate-200/50 rounded-sm"></div>
-                  </div>
-                </div>
-              )}
-
-              {/* Loading State */}
-              {isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-50 screenshot-shimmer">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="relative">
-                      <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin screenshot-glow-blue"></div>
-                      <Sparkles className="w-4 h-4 text-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 screenshot-pulse" />
+              {/* Screen Content */}
+              <div className={`w-full h-full bg-white ${config.borderRadius === 'rounded-3xl' ? 'rounded-2xl' : config.borderRadius === 'rounded-2xl' ? 'rounded-xl' : 'rounded-lg'} overflow-hidden relative group/screen ${deviceType === 'desktop' ? 'shadow-inner shadow-slate-900/30 ring-1 ring-slate-700/20' : 'screenshot-glass'}`}>
+                
+                {/* Browser Chrome (for desktop) */}
+                {deviceType === 'desktop' && (
+                  <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200/80 backdrop-blur-sm">
+                    <div className="flex gap-2">
+                      <div className="w-3 h-3 rounded-full bg-gradient-to-br from-red-400 to-red-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
+                      <div className="w-3 h-3 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
+                      <div className="w-3 h-3 rounded-full bg-gradient-to-br from-green-400 to-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer"></div>
                     </div>
-                    <p className="text-xs text-gray-500 font-medium">Capturing screenshot...</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Error State */}
-              {imageError && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
-                  <div className="flex flex-col items-center gap-3 text-center p-4">
-                    <Camera className="w-8 h-8 text-gray-400" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Screenshot unavailable</p>
-                      <p className="text-xs text-gray-500 mt-1">Unable to capture website preview</p>
+                    <div className="flex-1 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1.5 text-xs text-slate-600 font-mono truncate ml-2 shadow-inner border border-slate-200/50">
+                      <span className="text-slate-400">🔒</span> {url}
+                    </div>
+                    <div className="flex gap-1">
+                      <div className="w-6 h-4 bg-slate-200/50 rounded-sm"></div>
+                      <div className="w-6 h-4 bg-slate-200/50 rounded-sm"></div>
                     </div>
                   </div>
+                )}
+
+                {/* Loading State */}
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50 screenshot-shimmer">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="relative">
+                        <div className="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin screenshot-glow-blue"></div>
+                        <Sparkles className="w-4 h-4 text-blue-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 screenshot-pulse" />
+                      </div>
+                      <p className="text-xs text-gray-500 font-medium">Capturing screenshot...</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Error State */}
+                {imageError && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+                    <div className="flex flex-col items-center gap-3 text-center p-4">
+                      <Camera className="w-8 h-8 text-gray-400" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Screenshot unavailable</p>
+                        <p className="text-xs text-gray-500 mt-1">Unable to capture website preview</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Screenshot Image */}
+                {!imageError && (
+                  <img
+                    ref={imageRef}
+                    src={`data:image/png;base64,${screenshot}`}
+                    alt={`Screenshot of ${url}`}
+                    className={`w-full h-full object-cover object-top screenshot-zoom-transition cursor-pointer ${isLoading ? 'opacity-0' : 'opacity-100'} ${deviceType === 'desktop' ? 'scale-[1.3]' : ''}`}
+                    onLoad={handleImageLoad}
+                    onError={handleImageError}
+                    onClick={() => setIsFullscreen(true)}
+                  />
+                )}
+
+                {/* Desktop Scan Effect */}
+                {deviceType === 'desktop' && !imageError && !isLoading && !disableScanEffect && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div className="desktop-scan-line"></div>
+                  </div>
+                )}
+
+                {/* Overlay Effects */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover/screen:opacity-100 transition-opacity duration-300"></div>
+                
+                {/* Status Indicators */}
+                <div className="absolute top-2 left-2 flex gap-2">
+                  <Badge variant="secondary" className="text-xs bg-green-500/90 text-white border-0 screenshot-glass status-badge-animate">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full mr-1 screenshot-pulse"></div>
+                    Live
+                  </Badge>
                 </div>
-              )}
 
-              {/* Screenshot Image */}
-              {!imageError && (
-                <img
-                  ref={imageRef}
-                  src={`data:image/png;base64,${screenshot}`}
-                  alt={`Screenshot of ${url}`}
-                  className={`w-full h-full object-cover object-top screenshot-zoom-transition cursor-pointer ${isLoading ? 'opacity-0' : 'opacity-100'} ${deviceType === 'desktop' ? 'scale-[1.3]' : ''}`}
-                  onLoad={handleImageLoad}
-                  onError={handleImageError}
-                  onClick={() => setIsFullscreen(true)}
-                />
-              )}
-
-              {/* Desktop Scan Effect */}
-              {deviceType === 'desktop' && !imageError && !isLoading && !disableScanEffect && (
-                <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                  <div className="desktop-scan-line"></div>
+                {/* Zoom Indicator */}
+                <div className="absolute bottom-2 right-2 opacity-0 group-hover/screen:opacity-100 transition-opacity duration-300">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="h-6 w-6 p-0 bg-black/50 hover:bg-black/70 text-white border-0 screenshot-glass screenshot-button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsFullscreen(true)
+                    }}
+                  >
+                    <Eye className="w-3 h-3" />
+                  </Button>
                 </div>
-              )}
-
-              {/* Overlay Effects */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover/screen:opacity-100 transition-opacity duration-300"></div>
-              
-              {/* Status Indicators */}
-              <div className="absolute top-2 left-2 flex gap-2">
-                <Badge variant="secondary" className="text-xs bg-green-500/90 text-white border-0 screenshot-glass status-badge-animate">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full mr-1 screenshot-pulse"></div>
-                  Live
-                </Badge>
               </div>
 
-              {/* Zoom Indicator */}
-              <div className="absolute bottom-2 right-2 opacity-0 group-hover/screen:opacity-100 transition-opacity duration-300">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="h-6 w-6 p-0 bg-black/50 hover:bg-black/70 text-white border-0 screenshot-glass screenshot-button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsFullscreen(true)
-                  }}
-                >
-                  <Eye className="w-3 h-3" />
-                </Button>
-              </div>
+              {/* Device Reflection */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent rounded-3xl pointer-events-none"></div>
             </div>
-
-            {/* Device Reflection */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent rounded-3xl pointer-events-none"></div>
-          </div>
+          )}
 
           {/* Info Panel */}
           <motion.div
@@ -384,7 +496,8 @@ export function MultiDevicePreview({
   desktopScreenshot,
   url,
   timestamp,
-  disableScanEffect = false
+  disableScanEffect = false,
+  useRealisticMonitor = false
 }: {
   mobileScreenshot?: string
   tabletScreenshot?: string
@@ -392,6 +505,7 @@ export function MultiDevicePreview({
   url: string
   timestamp?: string
   disableScanEffect?: boolean
+  useRealisticMonitor?: boolean
 }) {
   const [activeDevice, setActiveDevice] = useState<'mobile' | 'tablet' | 'desktop'>('mobile')
 
@@ -447,6 +561,7 @@ export function MultiDevicePreview({
                 deviceType={device.type}
                 className="flex justify-center"
                 disableScanEffect={disableScanEffect}
+                useRealisticMonitor={useRealisticMonitor}
               />
             </motion.div>
           )
