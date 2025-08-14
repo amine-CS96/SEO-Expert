@@ -55,7 +55,7 @@ export function ScreenshotPreview({
       icon: Smartphone,
       label: 'Mobile View',
       width: 'w-64 md:w-72',
-      height: 'h-[30rem] md:h-[32rem]',
+      height: 'h-[28rem] md:h-[30rem]',
       borderRadius: 'rounded-3xl',
       padding: 'p-2'
     },
