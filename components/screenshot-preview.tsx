@@ -30,15 +30,17 @@ interface ScreenshotPreviewProps {
   timestamp?: string
   deviceType?: 'mobile' | 'tablet' | 'desktop'
   className?: string
+  disableScanEffect?: boolean
 }
 
-export function ScreenshotPreview({ 
-  screenshot, 
-  url, 
-  title = "Website Preview", 
+export function ScreenshotPreview({
+  screenshot,
+  url,
+  title = "Website Preview",
   timestamp,
   deviceType = 'mobile',
-  className = "" 
+  className = "",
+  disableScanEffect = false
 }: ScreenshotPreviewProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isZoomed, setIsZoomed] = useState(false)
@@ -226,7 +228,7 @@ export function ScreenshotPreview({
               )}
 
               {/* Desktop Scan Effect */}
-              {deviceType === 'desktop' && !imageError && !isLoading && (
+              {deviceType === 'desktop' && !imageError && !isLoading && !disableScanEffect && (
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
                   <div className="desktop-scan-line"></div>
                 </div>
@@ -376,18 +378,20 @@ export function ScreenshotPreview({
 }
 
 // Enhanced Multi-Device Preview Component
-export function MultiDevicePreview({ 
-  mobileScreenshot, 
-  tabletScreenshot, 
-  desktopScreenshot, 
-  url, 
-  timestamp 
+export function MultiDevicePreview({
+  mobileScreenshot,
+  tabletScreenshot,
+  desktopScreenshot,
+  url,
+  timestamp,
+  disableScanEffect = false
 }: {
   mobileScreenshot?: string
   tabletScreenshot?: string
   desktopScreenshot?: string
   url: string
   timestamp?: string
+  disableScanEffect?: boolean
 }) {
   const [activeDevice, setActiveDevice] = useState<'mobile' | 'tablet' | 'desktop'>('mobile')
 
@@ -442,6 +446,7 @@ export function MultiDevicePreview({
                 timestamp={timestamp}
                 deviceType={device.type}
                 className="flex justify-center"
+                disableScanEffect={disableScanEffect}
               />
             </motion.div>
           )
