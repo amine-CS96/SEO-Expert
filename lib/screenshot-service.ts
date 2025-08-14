@@ -51,12 +51,8 @@ export class ScreenshotService {
         return await this.captureWithScreenshotAPI(options);
       }
       
-      // Option 3: Désactiver les screenshots
-      console.log('Screenshots disabled in production environment');
-      return {
-        success: false,
-        error: 'Screenshots disabled in production'
-      };
+      // Option 3: Utiliser un service gratuit (screenshotapi.net)
+      return await this.captureWithFreeService(options);
       
     } catch (error) {
       console.error('External screenshot service error:', error);
@@ -168,6 +164,116 @@ export class ScreenshotService {
       success: false,
       error: 'Screenshot API not implemented'
     };
+  }
+
+  /**
+   * Capture avec un service gratuit (screenshotapi.net)
+   */
+  private static async captureWithFreeService(options: ScreenshotOptions): Promise<ScreenshotResult> {
+    try {
+      // Utiliser screenshotapi.net (service gratuit avec limite)
+      const viewportConfig = this.getViewportConfig(options.device || 'desktop');
+      const apiUrl = `https://shot.screenshotapi.net/screenshot`;
+      
+      const params = new URLSearchParams({
+        url: options.url,
+        width: viewportConfig.width.toString(),
+        height: viewportConfig.height.toString(),
+        output: 'json',
+        file_type: 'png',
+        wait_for_event: 'load'
+      });
+
+      const response = await fetch(`${apiUrl}?${params}`, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'SEO-Audit-Tool/1.0'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.screenshot) {
+        // L'API retourne déjà une image en base64
+        return {
+          success: true,
+          screenshot: data.screenshot.replace(/^data:image\/[a-z]+;base64,/, '')
+        };
+      }
+
+      return {
+        success: false,
+        error: 'No screenshot data received'
+      };
+      
+    } catch (error) {
+      console.error('Free screenshot service error:', error);
+      
+      // Fallback: essayer avec un autre service gratuit
+      try {
+        return await this.captureWithAlternativeFreeService(options);
+      } catch (fallbackError) {
+        console.error('Fallback screenshot service error:', fallbackError);
+        return {
+          success: false,
+          error: 'All screenshot services unavailable'
+        };
+      }
+    }
+  }
+
+  /**
+   * Service de fallback gratuit
+   */
+  private static async captureWithAlternativeFreeService(options: ScreenshotOptions): Promise<ScreenshotResult> {
+    try {
+      // Utiliser htmlcsstoimage.com avec leur endpoint gratuit limité
+      const viewportConfig = this.getViewportConfig(options.device || 'desktop');
+      
+      const response = await fetch('https://htmlcsstoimage.com/demo_run', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: options.url,
+          viewport_width: viewportConfig.width,
+          viewport_height: viewportConfig.height,
+          device_scale_factor: 1
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.url) {
+        // Télécharger l'image et la convertir en base64
+        const imageResponse = await fetch(data.url);
+        const imageBuffer = await imageResponse.arrayBuffer();
+        const base64 = Buffer.from(imageBuffer).toString('base64');
+        
+        return {
+          success: true,
+          screenshot: base64
+        };
+      }
+
+      throw new Error('No image URL received');
+      
+    } catch (error) {
+      console.error('Alternative free service error:', error);
+      return {
+        success: false,
+        error: 'Alternative service failed'
+      };
+    }
   }
 
   /**
