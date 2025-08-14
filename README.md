@@ -132,8 +132,9 @@ graph TB
     D --> F[Multi-Device Screenshots]
     D --> G[Content Analysis]
     C --> H[Report Generation]
-    H --> I[PDF Export]
-    H --> J[Email Delivery]
+    H --> I[SEO Report Visualization]
+    H --> J[PDF Export]
+    H --> K[Email Delivery]
     
     style A fill:#e1f5fe
     style B fill:#f3e5f5
