@@ -86,7 +86,7 @@ export const generateProfessionalPDF = async (data: SEOAuditReport) => {
     // Generate filename
     const cleanUrl = data.url.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9.-]/g, '-')
     const timestamp = new Date().toISOString().split('T')[0]
-    const fileName = `SEO-Expert-Audit-${cleanUrl}-${timestamp}.pdf`
+    const fileName = `SEO-Expert-${cleanUrl}-${timestamp}.pdf`
 
     // Save the PDF
     pdf.save(fileName)
