@@ -18,7 +18,7 @@ export const generateProfessionalPDF = async (data: SEOAuditReport) => {
       <div style="position: fixed; top: 20px; right: 20px; background: #3B82F6; color: white; padding: 12px 20px; border-radius: 8px; z-index: 9999; font-family: system-ui; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
         <div style="display: flex; align-items: center; gap: 8px;">
           <div style="width: 16px; height: 16px; border: 2px solid #ffffff40; border-top: 2px solid white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-          Generating professional PDF...
+          Generating PDF report...
         </div>
       </div>
       <style>
@@ -86,7 +86,7 @@ export const generateProfessionalPDF = async (data: SEOAuditReport) => {
     // Generate filename
     const cleanUrl = data.url.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9.-]/g, '-')
     const timestamp = new Date().toISOString().split('T')[0]
-    const fileName = `Professional-SEO-Audit-${cleanUrl}-${timestamp}.pdf`
+    const fileName = `SEO-Expert-Audit-${cleanUrl}-${timestamp}.pdf`
 
     // Save the PDF
     pdf.save(fileName)
@@ -110,7 +110,7 @@ export const generateProfessionalPDF = async (data: SEOAuditReport) => {
     console.error('❌ Error generating PDF:', error)
     
     // Remove loading indicator if it exists
-    const loadingElement = document.querySelector('[style*="Generating professional PDF"]')?.parentElement
+    const loadingElement = document.querySelector('[style*="Generating PDF report"]')?.parentElement
     if (loadingElement) {
       document.body.removeChild(loadingElement)
     }
