@@ -13,6 +13,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Lighthouse](https://img.shields.io/badge/Lighthouse-11.0-FF6900?style=for-the-badge&logo=lighthouse&logoColor=white)](https://developers.google.com/web/tools/lighthouse)
 [![Puppeteer](https://img.shields.io/badge/Puppeteer-21.0-40B5A4?style=for-the-badge&logo=puppeteer&logoColor=white)](https://pptr.dev/)
+[![JWT](https://img.shields.io/badge/JWT-Authentication-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](http://makeapullrequest.com)
@@ -52,10 +53,6 @@ Transform your website's performance with data-driven insights that matter. Our 
 - [🔧 Configuration](#-configuration)
 - [🌐 API Documentation](#-api-documentation)
 - [📁 Project Structure](#-project-structure)
-- [🚢 Deployment](#-deployment)
-- [🤝 Contributing](#-contributing)
-- [📊 Performance Metrics](#-performance-metrics)
-- [🔒 Security & Privacy](#-security--privacy)
 - [📄 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
 
@@ -94,13 +91,13 @@ Transform your website's performance with data-driven insights that matter. Our 
 <tr>
 <td width="50%">
 
-### 🤖 **Data-Driven Insights**
-- **Smart Recommendations** - Prioritized action items
-- **Competitive Analysis** - Industry benchmarking
-- **Technical Issue Detection** - Automated problem identification
-- **ROI Calculation** - Impact estimation for improvements
-- **Backlink Analysis** - Domain authority evaluation
-- **Social Signals** - Social media integration
+### 🔐 **Authentication & User Management**
+- **JWT-Based Authentication** - Secure token-based login system
+- **Password Security** - bcrypt hashing with strength validation
+- **User Registration** - Professional sign-up with email verification
+- **Profile Management** - Complete user profile with photo upload
+- **Session Management** - Secure token handling and refresh
+- **Password Recovery** - Secure password reset functionality
 
 </td>
 <td width="50%">
@@ -115,6 +112,30 @@ Transform your website's performance with data-driven insights that matter. Our 
 
 </td>
 </tr>
+<tr>
+<td width="50%">
+
+### 🤖 **Data-Driven Insights**
+- **Smart Recommendations** - Prioritized action items
+- **Competitive Analysis** - Industry benchmarking
+- **Technical Issue Detection** - Automated problem identification
+- **ROI Calculation** - Impact estimation for improvements
+- **Backlink Analysis** - Domain authority evaluation
+- **Social Signals** - Social media integration
+
+</td>
+<td width="50%">
+
+### 👤 **User Dashboard**
+- **Personalized Dashboard** - User-specific analytics and reports
+- **Audit History** - Track all previous SEO audits
+- **Account Management** - Profile settings and preferences
+- **Report Downloads** - Access to all generated reports
+- **Usage Statistics** - Monitor account activity and limits
+- **Notification Center** - Important updates and alerts
+
+</td>
+</tr>
 </table>
 
 ---
@@ -126,30 +147,38 @@ Transform your website's performance with data-driven insights that matter. Our 
 ```mermaid
 graph TB
     A[User Interface] --> B[Next.js Frontend]
-    B --> C[API Routes]
-    C --> D[SEO Analysis Engine]
-    D --> E[Puppeteer Analysis]
-    D --> F[Multi-Device Screenshots]
-    D --> G[Content Analysis]
-    C --> H[Report Generation]
-    H --> I[SEO Report Visualization]
-    H --> J[PDF Export]
-    H --> K[Email Delivery]
+    B --> C[Authentication System]
+    C --> D[JWT Tokens]
+    B --> E[API Routes]
+    E --> F[SEO Analysis Engine]
+    F --> G[Puppeteer Analysis]
+    F --> H[Multi-Device Screenshots]
+    F --> I[Content Analysis]
+    E --> J[Report Generation]
+    J --> P[SEO Report Visualization]
+    J --> K[PDF Export]
+    J --> L[Email Delivery]
+    E --> M[User Management]
+    M --> N[Profile Management]
+    M --> O[Dashboard Analytics]
     
     style A fill:#e1f5fe
     style B fill:#f3e5f5
-    style C fill:#e8f5e8
-    style D fill:#fff3e0
+    style C fill:#fff3e0
+    style E fill:#e8f5e8
+    style F fill:#fff3e0
 ```
 
 </div>
 
 ### **🔄 Data Flow**
-1. **Input Processing** - URL validation and preprocessing
-2. **Multi-threaded Analysis** - Parallel execution of audit components
-3. **Data Aggregation** - Consolidation of analysis results
-4. **Report Generation** - Dynamic PDF and visual report creation
-5. **Delivery System** - Email distribution and download options
+1. **User Authentication** - JWT-based secure login and registration
+2. **Input Processing** - URL validation and preprocessing
+3. **Multi-threaded Analysis** - Parallel execution of audit components
+4. **Data Aggregation** - Consolidation of analysis results
+5. **Report Generation** - Dynamic PDF and visual report creation
+6. **User Dashboard** - Personalized analytics and audit history
+7. **Delivery System** - Email distribution and download options
 
 ---
 
@@ -173,14 +202,21 @@ graph TB
 | ![Node.js](https://img.shields.io/badge/Node.js-20.0-green?logo=node.js) | `^20.0.0` | Runtime environment |
 | ![Cheerio](https://img.shields.io/badge/Cheerio-1.0-yellow) | `^1.0.0` | Server-side HTML parsing |
 | ![Axios](https://img.shields.io/badge/Axios-1.11-purple) | `^1.11.0` | HTTP client |
+| ![JWT](https://img.shields.io/badge/JWT-9.0-black?logo=jsonwebtokens) | `^9.0.2` | Authentication tokens |
+| ![bcrypt](https://img.shields.io/badge/bcrypt-3.0-red) | `^3.0.2` | Password hashing |
+| ![Nodemailer](https://img.shields.io/badge/Nodemailer-7.0-blue) | `^7.0.5` | Email service |
 
 ### **UI & Visualization**
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | ![Shadcn/ui](https://img.shields.io/badge/Shadcn/ui-Latest-black) | `Latest` | Component library |
+| ![Radix UI](https://img.shields.io/badge/Radix_UI-Latest-purple) | `Latest` | Headless UI primitives |
 | ![Framer Motion](https://img.shields.io/badge/Framer_Motion-10.16-pink) | `^10.16.16` | Animation library |
 | ![Chart.js](https://img.shields.io/badge/Chart.js-4.4-red) | `^4.4.0` | Data visualization |
 | ![Lucide React](https://img.shields.io/badge/Lucide-0.294-blue) | `^0.294.0` | Icon library |
+| ![React Hook Form](https://img.shields.io/badge/React_Hook_Form-7.48-pink) | `^7.48.2` | Form validation |
+| ![Zod](https://img.shields.io/badge/Zod-3.22-blue) | `^3.22.4` | Schema validation |
+| ![CVA](https://img.shields.io/badge/CVA-0.7-green) | `^0.7.0` | Component variants |
 
 </div>
 
@@ -256,6 +292,13 @@ nano .env.local
 # Email Configuration (Required for contact form)
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-gmail-app-password
+
+# JWT Configuration (Required for authentication)
+JWT_SECRET=your-super-secret-jwt-key-here-minimum-32-characters
+JWT_EXPIRES_IN=7d
+
+# Application Configuration (Optional)
+NEXTAUTH_URL=http://localhost:3000
 ```
 
 </details>
@@ -474,10 +517,190 @@ export default config;
 |----------|------|---------|-------------|
 | `EMAIL_USER` | `string` | - | Gmail address for sending emails |
 | `EMAIL_PASS` | `string` | - | Gmail App Password (not regular password) |
+| `JWT_SECRET` | `string` | - | Secret key for JWT token signing (min 32 chars) |
+| `JWT_EXPIRES_IN` | `string` | `7d` | JWT token expiration time |
+| `NEXTAUTH_URL` | `string` | `http://localhost:3000` | Application base URL |
+
+### **🔒 Security Configuration**
+
+<details>
+<summary><strong>JWT Token Security</strong></summary>
+
+**Generate Secure JWT Secret:**
+```bash
+# Generate a secure random string (32+ characters)
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# Or use OpenSSL
+openssl rand -hex 32
+```
+
+**JWT Configuration Best Practices:**
+- Use a minimum 32-character secret key
+- Set appropriate expiration times (7d for development, shorter for production)
+- Store secrets securely in environment variables
+- Never commit secrets to version control
+
+</details>
+
+<details>
+<summary><strong>Password Security</strong></summary>
+
+**bcrypt Configuration:**
+- Salt rounds: 12 (configurable in auth utils)
+- Automatic salt generation
+- Secure password comparison
+- Password strength validation on frontend
+
+**Password Requirements:**
+- Minimum 8 characters
+- At least one uppercase letter
+- At least one lowercase letter
+- At least one number
+- At least one special character
+
+</details>
+
+### **🗄️ Database Integration**
+
+<details>
+<summary><strong>Authentication Database - Coming Soon</strong></summary>
+
+**Current Implementation:**
+- **In-Memory Storage** - User accounts stored temporarily in application memory
+- **Development Mode** - Perfect for testing and development purposes
+- **Session Persistence** - JWT tokens maintain user sessions across browser sessions
+
+> **Note:** The current authentication system is fully functional for development and testing. Database integration will be added in the next major release to provide production-ready user management.
+
+</details>
 
 ---
 
 ## 🌐 **API Documentation**
+
+### **🔐 Authentication Endpoints**
+
+<details>
+<summary><strong>POST /api/auth/register</strong></summary>
+
+**Description:** Register a new user account with secure password hashing
+
+**Request:**
+```typescript
+interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+```
+
+**Response:**
+```typescript
+interface RegisterResponse {
+  success: boolean;
+  message: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    createdAt: string;
+  };
+  error?: string;
+}
+```
+
+**Example Request:**
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "SecurePassword123!",
+    "confirmPassword": "SecurePassword123!"
+  }'
+```
+
+</details>
+
+<details>
+<summary><strong>POST /api/auth/login</strong></summary>
+
+**Description:** Authenticate user and return JWT token
+
+**Request:**
+```typescript
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+```
+
+**Response:**
+```typescript
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  token?: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  error?: string;
+}
+```
+
+**Example Request:**
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john@example.com",
+    "password": "SecurePassword123!"
+  }'
+```
+
+</details>
+
+<details>
+<summary><strong>POST /api/auth/verify</strong></summary>
+
+**Description:** Verify JWT token validity and return user information
+
+**Request:**
+```typescript
+interface VerifyRequest {
+  token: string;
+}
+```
+
+**Response:**
+```typescript
+interface VerifyResponse {
+  success: boolean;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  error?: string;
+}
+```
+
+**Example Request:**
+```bash
+curl -X POST http://localhost:3000/api/auth/verify \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-jwt-token-here" \
+  -d '{
+    "token": "your-jwt-token-here"
+  }'
+```
+
+</details>
 
 ### **🔍 Audit Endpoints**
 
@@ -597,24 +820,29 @@ interface ContactResponse {
 
 ## 📁 **Project Structure**
 
+
 <details>
 <summary><strong>Complete Directory Tree</strong></summary>
 
 ```
-seo-expert/
+SEO-Expert/
 ├── 📁 app/                          # Next.js App Router
-│   ├── 📄 layout.tsx               # Root layout component
+│   ├── 📄 layout.tsx               # Root layout with AuthProvider
 │   ├── 📄 page.tsx                 # Homepage
 │   ├── 📄 globals.css              # Global styles
-│   ├── 📄 loading.tsx              # Global loading UI
-│   ├── 📄 error.tsx                # Global error UI
-│   ├── 📄 not-found.tsx            # 404 page
 │   │
 │   ├── 📁 api/                     # API routes
 │   │   ├── 📁 audit/
 │   │   │   └── 📄 route.ts         # SEO audit endpoint
-│   │   └── 📁 contact/
-│   │       └── 📄 route.ts         # Contact form endpoint
+│   │   ├── 📁 contact/
+│   │   │   └── 📄 route.ts         # Contact form endpoint
+│   │   └── 📁 auth/                # Authentication API routes
+│   │       ├── 📁 login/
+│   │       │   └── 📄 route.ts     # JWT login endpoint
+│   │       ├── 📁 register/
+│   │       │   └── 📄 route.ts     # User registration endpoint
+│   │       └── 📁 verify/
+│   │           └── 📄 route.ts     # Token verification endpoint
 │   │
 │   ├── 📁 about/
 │   │   └── 📄 page.tsx             # About page
@@ -624,6 +852,16 @@ seo-expert/
 │   │   └── 📄 page.tsx             # Features page
 │   ├── 📁 pricing/
 │   │   └── 📄 page.tsx             # Pricing page
+│   ├── 📁 dashboard/
+│   │   └── 📄 page.tsx             # User dashboard with realistic states
+│   ├── 📁 login/
+│   │   └── 📄 page.tsx             # Professional sign-in page
+│   ├── 📁 register/
+│   │   └── 📄 page.tsx             # User registration page
+│   ├── 📁 profile/
+│   │   └── 📄 page.tsx             # Complete profile management
+│   ├── 📁 loading/
+│   │   └── 📄 page.tsx             # Loading page
 │   └── 📁 test-report/
 │       └── 📄 page.tsx             # Test report page
 │
@@ -633,11 +871,24 @@ seo-expert/
 │   ├── 📄 screenshot-preview.tsx   # Screenshot component
 │   ├── 📄 error-display.tsx       # Error handling component
 │   ├── 📄 theme-provider.tsx      # Theme context provider
-│   ├── 📄 header.tsx              # Navigation header
+│   ├── 📄 header.tsx              # Navigation header with auth
 │   ├── 📄 footer.tsx              # Site footer
 │   ├── 📄 hero.tsx                # Hero section
 │   ├── 📄 features.tsx            # Features showcase
 │   ├── 📄 faq.tsx                 # FAQ section
+│   ├── 📄 audit-report-section.tsx # Audit report section
+│   ├── 📄 background-animation.tsx # Background animations
+│   ├── 📄 chart.tsx               # Chart components
+│   ├── 📄 client-wrapper.tsx      # Client-side wrapper
+│   ├── 📄 how-it-works.tsx        # How it works section
+│   ├── 📄 inline-audit-loader.tsx # Inline audit loader
+│   ├── 📄 logo.tsx                # Logo component
+│   ├── 📄 report-loader.tsx       # Report loader component
+│   ├── 📄 seo-report-pdf.tsx      # PDF report generator
+│   ├── 📄 theme-toggle.tsx        # Theme toggle component
+│   │
+│   ├── � auth/                   # Authentication components
+│   │   └── 📄 user-profile.tsx    # User profile dropdown
 │   │
 │   └── 📁 ui/                     # Shadcn/ui components
 │       ├── 📄 button.tsx
@@ -645,44 +896,58 @@ seo-expert/
 │       ├── 📄 input.tsx
 │       ├── 📄 label.tsx
 │       ├── 📄 progress.tsx
-│       ├── 📄 tabs.tsx
-│       └── ... (other UI components)
+│       ├── 📄 tabs.tsx            # Profile tabs component
+│       ├── 📄 avatar.tsx          # User avatar component
+│       ├── 📄 badge.tsx           # Status badges
+│       ├── 📄 separator.tsx       # UI separators
+│       ├── 📄 accordion.tsx       # Accordion component
+│       ├── 📄 chart.tsx           # Chart UI component
+│       ├── 📄 textarea.tsx        # Textarea component
+│       ├── 📄 toast.tsx           # Toast component
+│       ├── 📄 toaster.tsx         # Toast container
+│       ├── 📄 use-mobile.tsx      # Mobile detection hook
+│       └── 📄 use-toast.ts        # Toast notification hook
 │
 ├── 📁 contexts/                    # React contexts
 │   ├── 📄 audit-context.tsx       # Audit state management
+│   ├── 📄 auth-context.tsx        # Authentication state management
 │   └── 📄 theme-context.tsx       # Theme management
 │
 ├── 📁 hooks/                      # Custom React hooks
-│   ├── 📄 use-mobile.tsx          # Mobile detection hook
 │   └── 📄 use-toast.ts            # Toast notification hook
 │
 ├── 📁 lib/                        # Utility functions
-│   └── 📄 utils.ts                # Common utilities
+│   ├── 📄 utils.ts                # Common utilities
+│   ├── 📄 auth-utils.ts           # JWT token utilities
+│   ├── 📄 password-utils.ts       # Password validation utilities
+│   └── 📄 screenshot-service.ts   # Screenshot service utilities
 │
 ├── 📁 public/                     # Static assets
 │   ├── 📄 favicon.svg             # Site favicon
-│   ├── 📄 apple-touch-icon.png    # Apple touch icon
-│   └── 📁 screenshots/            # Sample screenshots
+│   └── 📄 apple-touch-icon.png    # Apple touch icon
 │
 ├── 📁 styles/                     # Additional styles
 │   ├── 📄 globals.css             # Global CSS
 │   └── 📄 screenshot-preview.css   # Component-specific styles
 │
 ├── 📁 types/                      # TypeScript definitions
-│   └── 📄 seo.ts                  # SEO-related types
+│   ├── 📄 seo.ts                  # SEO-related types
+│   └── 📄 auth.ts                 # Authentication types
 │
 ├── 📄 package.json                # Dependencies & scripts
+├── 📄 package-lock.json           # NPM lock file
+├── 📄 pnpm-lock.yaml              # PNPM lock file
 ├── 📄 tsconfig.json               # TypeScript configuration
 ├── 📄 tailwind.config.ts          # Tailwind CSS configuration
 ├── 📄 next.config.mjs             # Next.js configuration
 ├── 📄 postcss.config.mjs          # PostCSS configuration
 ├── 📄 components.json             # Shadcn/ui configuration
 ├── 📄 .env.example                # Environment variables template
+├── 📄 .env.local                  # Local environment variables
 ├── 📄 .gitignore                  # Git ignore rules
 ├── 📄 LICENSE                     # MIT license
 └── 📄 README.md                   # Project documentation
 ```
-
 </details>
 
 ---
