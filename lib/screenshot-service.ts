@@ -29,7 +29,7 @@ export class ScreenshotService {
   static async captureScreenshot(options: ScreenshotOptions): Promise<ScreenshotResult> {
     if (this.isVercelEnvironment()) {
       // En production sur Vercel, utiliser un service externe ou désactiver
-      return await this.captureWithExternalService(options);
+      return await this.captureWithPuppeteer(options);
     } else {
       // En développement local, utiliser Puppeteer si disponible
       return await this.captureWithPuppeteer(options);
@@ -64,20 +64,42 @@ export class ScreenshotService {
   }
 
   /**
-   * Capture avec Puppeteer (développement local)
+   * Capture avec Puppeteer (compatible Vercel & Local)
    */
   private static async captureWithPuppeteer(options: ScreenshotOptions): Promise<ScreenshotResult> {
     try {
-      console.log('Attempting to capture screenshot with Puppeteer...');
-      // Importer Puppeteer dynamiquement pour éviter les erreurs en production
-      const puppeteerModule = await import('puppeteer');
-      const puppeteer = puppeteerModule.default || puppeteerModule as any;
+      console.log('Attempting to capture screenshot...');
 
-      console.log('Puppeteer imported. Launching browser...');
-      const browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
+      let browser;
+      let puppeteer;
+
+      if (this.isVercelEnvironment()) {
+        console.log('Running in Vercel environment. Using puppeteer-core and @sparticuz/chromium...');
+        const chromium = await import('@sparticuz/chromium');
+        const puppeteerCore = await import('puppeteer-core');
+
+        puppeteer = puppeteerCore.default || puppeteerCore;
+
+        const chromiumAny = chromium.default as any;
+
+        // Configuration spécifique pour Vercel avec fallbacks
+        browser = await puppeteer.launch({
+          args: chromiumAny.args,
+          defaultViewport: chromiumAny.defaultViewport || { width: 1920, height: 1080 },
+          executablePath: await chromiumAny.executablePath(),
+          headless: chromiumAny.headless || 'new',
+          ignoreHTTPSErrors: true,
+        } as any);
+      } else {
+        console.log('Running in local environment. Using standard puppeteer...');
+        const puppeteerModule = await import('puppeteer');
+        puppeteer = puppeteerModule.default || puppeteerModule as any;
+
+        browser = await puppeteer.launch({
+          headless: 'new',
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+      }
 
       const page = await browser.newPage();
 
