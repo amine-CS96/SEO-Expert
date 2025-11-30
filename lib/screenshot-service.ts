@@ -20,7 +20,7 @@ export interface ScreenshotResult {
  */
 export class ScreenshotService {
   private static isVercelEnvironment(): boolean {
-    return process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+    return process.env.VERCEL === '1';
   }
 
   /**
@@ -45,15 +45,15 @@ export class ScreenshotService {
       if (process.env.HTMLCSSTOIMAGE_API_KEY) {
         return await this.captureWithHtmlCssToImage(options);
       }
-      
+
       // Option 2: Utiliser screenshot.guru ou autre service
       if (process.env.SCREENSHOT_API_KEY) {
         return await this.captureWithScreenshotAPI(options);
       }
-      
+
       // Option 3: Utiliser un service gratuit (screenshotapi.net)
       return await this.captureWithFreeService(options);
-      
+
     } catch (error) {
       console.error('External screenshot service error:', error);
       return {
@@ -68,42 +68,48 @@ export class ScreenshotService {
    */
   private static async captureWithPuppeteer(options: ScreenshotOptions): Promise<ScreenshotResult> {
     try {
+      console.log('Attempting to capture screenshot with Puppeteer...');
       // Importer Puppeteer dynamiquement pour éviter les erreurs en production
-      const puppeteer = await import('puppeteer');
-      
-      const browser = await puppeteer.default.launch({
+      const puppeteerModule = await import('puppeteer');
+      const puppeteer = puppeteerModule.default || puppeteerModule as any;
+
+      console.log('Puppeteer imported. Launching browser...');
+      const browser = await puppeteer.launch({
         headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
-      
+
       const page = await browser.newPage();
-      
+
       // Configuration selon le device
       const viewportConfig = this.getViewportConfig(options.device || 'desktop');
       await page.setViewport(viewportConfig);
-      
+
+      console.log(`Navigating to ${options.url}...`);
       await page.goto(options.url, {
         waitUntil: 'networkidle2',
-        timeout: 20000
+        timeout: 30000
       });
-      
+
+      console.log('Taking screenshot...');
       const screenshot = await page.screenshot({
         fullPage: options.fullPage || false,
         encoding: 'base64'
       }) as string;
-      
+
       await browser.close();
-      
+      console.log('Screenshot captured successfully.');
+
       return {
         success: true,
         screenshot
       };
-      
+
     } catch (error) {
       console.error('Puppeteer screenshot error:', error);
       return {
         success: false,
-        error: 'Puppeteer screenshot failed'
+        error: error instanceof Error ? error.message : 'Puppeteer screenshot failed'
       };
     }
   }
@@ -114,15 +120,15 @@ export class ScreenshotService {
   private static async captureWithHtmlCssToImage(options: ScreenshotOptions): Promise<ScreenshotResult> {
     try {
       const viewportConfig = this.getViewportConfig(options.device || 'desktop');
-      
+
       // Ajuster la hauteur pour fullPage
       let captureHeight = options.height || viewportConfig.height;
       if (options.fullPage) {
         captureHeight = options.device === 'tablet' ? 2048 :
-                      options.device === 'mobile' ? 1800 : // Augmenté pour mobile
-                      options.height || 1080;
+          options.device === 'mobile' ? 1800 : // Augmenté pour mobile
+            options.height || 1080;
       }
-      
+
       const response = await fetch('https://hcti.io/v1/image', {
         method: 'POST',
         headers: {
@@ -137,26 +143,26 @@ export class ScreenshotService {
           full_page: options.fullPage || false
         })
       });
-      
+
       const data = await response.json();
-      
+
       if (data.url) {
         // Télécharger l'image et la convertir en base64
         const imageResponse = await fetch(data.url);
         const imageBuffer = await imageResponse.arrayBuffer();
         const base64 = Buffer.from(imageBuffer).toString('base64');
-        
+
         return {
           success: true,
           screenshot: base64
         };
       }
-      
+
       return {
         success: false,
         error: 'Failed to generate screenshot'
       };
-      
+
     } catch (error) {
       console.error('HtmlCssToImage error:', error);
       return {
@@ -184,18 +190,18 @@ export class ScreenshotService {
     try {
       // Utiliser screenshotapi.net (service gratuit avec limite)
       const viewportConfig = this.getViewportConfig(options.device || 'desktop');
-      
+
       // Ajuster la hauteur pour fullPage
       let captureHeight = viewportConfig.height;
       if (options.fullPage) {
         // Pour fullPage, utiliser une hauteur plus grande pour capturer plus de contenu
         captureHeight = options.device === 'tablet' ? 2048 :
-                      options.device === 'mobile' ? 1800 : // Augmenté pour capturer plus de contenu mobile
-                      1080; // Desktop reste pareil car fullPage: false
+          options.device === 'mobile' ? 1800 : // Augmenté pour capturer plus de contenu mobile
+            1080; // Desktop reste pareil car fullPage: false
       }
-      
+
       const apiUrl = `https://shot.screenshotapi.net/screenshot`;
-      
+
       const params = new URLSearchParams({
         url: options.url,
         width: viewportConfig.width.toString(),
@@ -218,7 +224,7 @@ export class ScreenshotService {
       }
 
       const data = await response.json();
-      
+
       if (data.screenshot) {
         // L'API retourne déjà une image en base64
         return {
@@ -231,10 +237,10 @@ export class ScreenshotService {
         success: false,
         error: 'No screenshot data received'
       };
-      
+
     } catch (error) {
       console.error('Free screenshot service error:', error);
-      
+
       // Fallback: essayer avec un autre service gratuit
       try {
         return await this.captureWithAlternativeFreeService(options);
@@ -255,15 +261,15 @@ export class ScreenshotService {
     try {
       // Utiliser htmlcsstoimage.com avec leur endpoint gratuit limité
       const viewportConfig = this.getViewportConfig(options.device || 'desktop');
-      
+
       // Ajuster la hauteur pour fullPage
       let captureHeight = viewportConfig.height;
       if (options.fullPage) {
         captureHeight = options.device === 'tablet' ? 2048 :
-                      options.device === 'mobile' ? 1800 : // Augmenté pour mobile
-                      1080;
+          options.device === 'mobile' ? 1800 : // Augmenté pour mobile
+            options.height || 1080;
       }
-      
+
       const response = await fetch('https://htmlcsstoimage.com/demo_run', {
         method: 'POST',
         headers: {
@@ -283,13 +289,13 @@ export class ScreenshotService {
       }
 
       const data = await response.json();
-      
+
       if (data.url) {
         // Télécharger l'image et la convertir en base64
         const imageResponse = await fetch(data.url);
         const imageBuffer = await imageResponse.arrayBuffer();
         const base64 = Buffer.from(imageBuffer).toString('base64');
-        
+
         return {
           success: true,
           screenshot: base64
@@ -297,7 +303,7 @@ export class ScreenshotService {
       }
 
       throw new Error('No image URL received');
-      
+
     } catch (error) {
       console.error('Alternative free service error:', error);
       return {
@@ -331,7 +337,7 @@ export class ScreenshotService {
     mobile?: string;
   }> {
     const results: any = {};
-    
+
     try {
       // Desktop
       const desktopResult = await this.captureScreenshot({
@@ -342,7 +348,7 @@ export class ScreenshotService {
       if (desktopResult.success) {
         results.desktop = desktopResult.screenshot;
       }
-      
+
       // Tablet
       const tabletResult = await this.captureScreenshot({
         url,
@@ -352,7 +358,7 @@ export class ScreenshotService {
       if (tabletResult.success) {
         results.tablet = tabletResult.screenshot;
       }
-      
+
       // Mobile
       const mobileResult = await this.captureScreenshot({
         url,
@@ -362,11 +368,11 @@ export class ScreenshotService {
       if (mobileResult.success) {
         results.mobile = mobileResult.screenshot;
       }
-      
+
     } catch (error) {
       console.error('Multiple screenshots error:', error);
     }
-    
+
     return results;
   }
 }
